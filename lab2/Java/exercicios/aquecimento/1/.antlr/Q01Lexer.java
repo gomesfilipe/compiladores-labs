@@ -1,4 +1,4 @@
-// Generated from /home/fgasouza/compiladores-labs/lab1/Java/exercicios/aquecimento/Q03.g by ANTLR 4.9.2
+// Generated from /home/fgasouza/compiladores-labs/lab2/Java/exercicios/aquecimento/1/Q01.g by ANTLR 4.9.2
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -9,14 +9,14 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
-public class Q03 extends Lexer {
+public class Q01Lexer extends Lexer {
 	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		WS=1, HEX=2;
+		WS=1, LPAR=2, RPAR=3, CHAR=4, ENTER=5;
 	public static String[] channelNames = {
 		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
 	};
@@ -27,19 +27,20 @@ public class Q03 extends Lexer {
 
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"DIGIT", "WS", "HEX"
+			"WS", "LPAR", "RPAR", "CHAR", "ENTER"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
+			null, null, "'('", "')'", "'a'", "'\n'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "WS", "HEX"
+			null, "WS", "LPAR", "RPAR", "CHAR", "ENTER"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -77,13 +78,13 @@ public class Q03 extends Lexer {
 	}
 
 
-	public Q03(CharStream input) {
+	public Q01Lexer(CharStream input) {
 		super(input);
 		_interp = new LexerATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
 	@Override
-	public String getGrammarFileName() { return "Q03.g"; }
+	public String getGrammarFileName() { return "Q01.g"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
@@ -100,38 +101,16 @@ public class Q03 extends Lexer {
 	@Override
 	public ATN getATN() { return _ATN; }
 
-	@Override
-	public void action(RuleContext _localctx, int ruleIndex, int actionIndex) {
-		switch (ruleIndex) {
-		case 2:
-			HEX_action((RuleContext)_localctx, actionIndex);
-			break;
-		}
-	}
-	private void HEX_action(RuleContext _localctx, int actionIndex) {
-		switch (actionIndex) {
-		case 0:
-			 System.out.println(getText()); 
-			break;
-		}
-	}
-
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2\4.\b\1\4\2\t\2\4"+
-		"\3\t\3\4\4\t\4\3\2\3\2\3\3\6\3\r\n\3\r\3\16\3\16\3\3\3\3\3\4\3\4\3\4\5"+
-		"\4\26\n\4\3\4\5\4\31\n\4\3\4\5\4\34\n\4\3\4\5\4\37\n\4\3\4\5\4\"\n\4\3"+
-		"\4\5\4%\n\4\3\4\5\4(\n\4\3\4\5\4+\n\4\3\4\3\4\2\2\5\3\2\5\3\7\4\3\2\5"+
-		"\5\2\62;CHch\4\2\13\f\"\"\4\2ZZzz\2\65\2\5\3\2\2\2\2\7\3\2\2\2\3\t\3\2"+
-		"\2\2\5\f\3\2\2\2\7\22\3\2\2\2\t\n\t\2\2\2\n\4\3\2\2\2\13\r\t\3\2\2\f\13"+
-		"\3\2\2\2\r\16\3\2\2\2\16\f\3\2\2\2\16\17\3\2\2\2\17\20\3\2\2\2\20\21\b"+
-		"\3\2\2\21\6\3\2\2\2\22\23\7\62\2\2\23\25\t\4\2\2\24\26\5\3\2\2\25\24\3"+
-		"\2\2\2\25\26\3\2\2\2\26\30\3\2\2\2\27\31\5\3\2\2\30\27\3\2\2\2\30\31\3"+
-		"\2\2\2\31\33\3\2\2\2\32\34\5\3\2\2\33\32\3\2\2\2\33\34\3\2\2\2\34\36\3"+
-		"\2\2\2\35\37\5\3\2\2\36\35\3\2\2\2\36\37\3\2\2\2\37!\3\2\2\2 \"\5\3\2"+
-		"\2! \3\2\2\2!\"\3\2\2\2\"$\3\2\2\2#%\5\3\2\2$#\3\2\2\2$%\3\2\2\2%\'\3"+
-		"\2\2\2&(\5\3\2\2\'&\3\2\2\2\'(\3\2\2\2(*\3\2\2\2)+\5\3\2\2*)\3\2\2\2*"+
-		"+\3\2\2\2+,\3\2\2\2,-\b\4\3\2-\b\3\2\2\2\f\2\16\25\30\33\36!$\'*\4\b\2"+
-		"\2\3\4\2";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2\7\34\b\1\4\2\t\2"+
+		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\6\2\17\n\2\r\2\16\2\20\3\2\3\2\3"+
+		"\3\3\3\3\4\3\4\3\5\3\5\3\6\3\6\2\2\7\3\3\5\4\7\5\t\6\13\7\3\2\3\4\2\13"+
+		"\f\"\"\2\34\2\3\3\2\2\2\2\5\3\2\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2"+
+		"\2\3\16\3\2\2\2\5\24\3\2\2\2\7\26\3\2\2\2\t\30\3\2\2\2\13\32\3\2\2\2\r"+
+		"\17\t\2\2\2\16\r\3\2\2\2\17\20\3\2\2\2\20\16\3\2\2\2\20\21\3\2\2\2\21"+
+		"\22\3\2\2\2\22\23\b\2\2\2\23\4\3\2\2\2\24\25\7*\2\2\25\6\3\2\2\2\26\27"+
+		"\7+\2\2\27\b\3\2\2\2\30\31\7c\2\2\31\n\3\2\2\2\32\33\7\f\2\2\33\f\3\2"+
+		"\2\2\4\2\20\3\b\2\2";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

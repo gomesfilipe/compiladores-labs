@@ -17,7 +17,6 @@ extern int yylineno;
 %left PLUS MINUS
 %left TIMES OVER
 
-
 %%
 program: PROGRAM ID SEMI varssect stmtsect ;
 varssect: VAR optvardecl ;
