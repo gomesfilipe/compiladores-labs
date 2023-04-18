@@ -16,11 +16,11 @@ id [A-Za-z][A-Za-z0-9_\-]*
 %%
 "{"[^\}]*"}" { }
 [ \t\n\r]+   { }
-"begin"      { /*return BEGIN;*/ }
+"begin"      { return T_BEGIN; }
 "bool"       { return BOOL; }
 "else"       { return ELSE; }
 "end"        { return END; }
-"false"      { return FALS; }
+"false"      { return FALSE; }
 "if"         { return IF; }
 "int"        { return INT; }
 "program"    { return PROGRAM; }
@@ -29,7 +29,7 @@ id [A-Za-z][A-Za-z0-9_\-]*
 "repeat"     { return REPEAT; }
 "string"     { return STRING; }
 "then"       { return THEN; }
-"true"       { return TRU; }
+"true"       { return TRUE; }
 "until"      { return UNTIL; }
 "var"        { return VAR; }
 "write"      { return WRITE; }
@@ -43,9 +43,9 @@ id [A-Za-z][A-Za-z0-9_\-]*
 "("          { return LPAR; }
 ")"          { return RPAR; }
 ";"          { return SEMI; }
-{int_val}    { /*return INT_VAL;*/ } 
-{real_val}   { /*return REAL_VAL;*/ }
-{str_val}    { /*return STR_VAL;*/ }
-{id}         { /*return ID;*/ }
+{int_val}    { return INT_VAL; } 
+{real_val}   { return REAL_VAL; }
+{str_val}    { return STR_VAL; }
+{id}         { return ID; }
 .            { printf("LEXICAL ERROR (%d): Unknown symbol %s\n",yylineno, yytext); exit(EXIT_FAILURE); }
 %%

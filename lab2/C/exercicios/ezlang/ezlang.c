@@ -838,7 +838,7 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 19 "ezlang.l"
-{ /*return BEGIN;*/ }
+{ return T_BEGIN; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -858,7 +858,7 @@ YY_RULE_SETUP
 case 7:
 YY_RULE_SETUP
 #line 23 "ezlang.l"
-{ return FALS; }
+{ return FALSE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
@@ -903,7 +903,7 @@ YY_RULE_SETUP
 case 16:
 YY_RULE_SETUP
 #line 32 "ezlang.l"
-{ return TRU; }
+{ return TRUE; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
@@ -973,23 +973,23 @@ YY_RULE_SETUP
 case 30:
 YY_RULE_SETUP
 #line 46 "ezlang.l"
-{ /*return INT_VAL;*/ } 
+{ return INT_VAL; } 
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 47 "ezlang.l"
-{ /*return REAL_VAL;*/ }
+{ return REAL_VAL; }
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */
 YY_RULE_SETUP
 #line 48 "ezlang.l"
-{ /*return STR_VAL;*/ }
+{ return STR_VAL; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 49 "ezlang.l"
-{ /*return ID;*/ }
+{ return ID; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP

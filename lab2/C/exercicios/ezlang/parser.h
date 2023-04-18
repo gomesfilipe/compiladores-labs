@@ -54,11 +54,11 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    BEGIN = 258,                   /* BEGIN  */
+    T_BEGIN = 258,                 /* T_BEGIN  */
     BOOL = 259,                    /* BOOL  */
     ELSE = 260,                    /* ELSE  */
     END = 261,                     /* END  */
-    FALS = 262,                    /* FALS  */
+    FALSE = 262,                   /* FALSE  */
     IF = 263,                      /* IF  */
     INT = 264,                     /* INT  */
     PROGRAM = 265,                 /* PROGRAM  */
@@ -67,7 +67,7 @@ extern int yydebug;
     REPEAT = 268,                  /* REPEAT  */
     STRING = 269,                  /* STRING  */
     THEN = 270,                    /* THEN  */
-    TRU = 271,                     /* TRU  */
+    TRUE = 271,                    /* TRUE  */
     UNTIL = 272,                   /* UNTIL  */
     VAR = 273,                     /* VAR  */
     WRITE = 274,                   /* WRITE  */
