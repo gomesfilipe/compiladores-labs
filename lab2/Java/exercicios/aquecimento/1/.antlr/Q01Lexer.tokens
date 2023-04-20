@@ -1,9 +1,8 @@
-WS=1
-LPAR=2
-RPAR=3
-CHAR=4
-ENTER=5
-'('=2
-')'=3
-'a'=4
-'\n'=5
+LPAR=1
+RPAR=2
+CHAR=3
+WS=4
+UNKNOWN=5
+'('=1
+')'=2
+'a'=3

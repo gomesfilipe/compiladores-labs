@@ -1,0 +1,10 @@
+WS=1
+LPAR=2
+RPAR=3
+CHAR=4
+ENTER=5
+UNKNOWN=6
+'('=2
+')'=3
+'a'=4
+'\n'=5

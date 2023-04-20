@@ -16,25 +16,25 @@ public class Q01Parser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		WS=1, LPAR=2, RPAR=3, CHAR=4, ENTER=5;
+		LPAR=1, RPAR=2, CHAR=3, WS=4, UNKNOWN=5;
 	public static final int
-		RULE_line = 0, RULE_expr = 1;
+		RULE_begin = 0, RULE_expr = 1;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"line", "expr"
+			"begin", "expr"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, null, "'('", "')'", "'a'", "'\n'"
+			null, "'('", "')'", "'a'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "WS", "LPAR", "RPAR", "CHAR", "ENTER"
+			null, "LPAR", "RPAR", "CHAR", "WS", "UNKNOWN"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -88,27 +88,24 @@ public class Q01Parser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
-	public static class LineContext extends ParserRuleContext {
+	public static class BeginContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode ENTER() { return getToken(Q01Parser.ENTER, 0); }
-		public LineContext(ParserRuleContext parent, int invokingState) {
+		public BeginContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_line; }
+		@Override public int getRuleIndex() { return RULE_begin; }
 	}
 
-	public final LineContext line() throws RecognitionException {
-		LineContext _localctx = new LineContext(_ctx, getState());
-		enterRule(_localctx, 0, RULE_line);
+	public final BeginContext begin() throws RecognitionException {
+		BeginContext _localctx = new BeginContext(_ctx, getState());
+		enterRule(_localctx, 0, RULE_begin);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(4);
 			expr();
-			setState(5);
-			match(ENTER);
 			}
 		}
 		catch (RecognitionException re) {
@@ -139,24 +136,24 @@ public class Q01Parser extends Parser {
 		ExprContext _localctx = new ExprContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_expr);
 		try {
-			setState(12);
+			setState(11);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case LPAR:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(7);
+				setState(6);
 				match(LPAR);
-				setState(8);
+				setState(7);
 				expr();
-				setState(9);
+				setState(8);
 				match(RPAR);
 				}
 				break;
 			case CHAR:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(11);
+				setState(10);
 				match(CHAR);
 				}
 				break;
@@ -176,11 +173,11 @@ public class Q01Parser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\7\21\4\2\t\2\4\3"+
-		"\t\3\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\5\3\17\n\3\3\3\2\2\4\2\4\2\2\2\17"+
-		"\2\6\3\2\2\2\4\16\3\2\2\2\6\7\5\4\3\2\7\b\7\7\2\2\b\3\3\2\2\2\t\n\7\4"+
-		"\2\2\n\13\5\4\3\2\13\f\7\5\2\2\f\17\3\2\2\2\r\17\7\6\2\2\16\t\3\2\2\2"+
-		"\16\r\3\2\2\2\17\5\3\2\2\2\3\16";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\7\20\4\2\t\2\4\3"+
+		"\t\3\3\2\3\2\3\3\3\3\3\3\3\3\3\3\5\3\16\n\3\3\3\2\2\4\2\4\2\2\2\16\2\6"+
+		"\3\2\2\2\4\r\3\2\2\2\6\7\5\4\3\2\7\3\3\2\2\2\b\t\7\3\2\2\t\n\5\4\3\2\n"+
+		"\13\7\4\2\2\13\16\3\2\2\2\f\16\7\5\2\2\r\b\3\2\2\2\r\f\3\2\2\2\16\5\3"+
+		"\2\2\2\3\r";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

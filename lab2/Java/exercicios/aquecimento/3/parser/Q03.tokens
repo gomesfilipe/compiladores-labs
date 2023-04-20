@@ -1,0 +1,15 @@
+IF=1
+ELSE=2
+OTHER=3
+EXP=4
+LPAR=5
+RPAR=6
+ENTER=7
+WS=8
+UNKNOWN=9
+'if'=1
+'else'=2
+'other'=3
+'('=5
+')'=6
+'\n'=7

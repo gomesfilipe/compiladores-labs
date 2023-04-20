@@ -1,0 +1,15 @@
+NUMBER=1
+PLUS=2
+MINUS=3
+TIMES=4
+OVER=5
+LPAR=6
+RPAR=7
+WS=8
+UNKNOWN=9
+'+'=2
+'-'=3
+'*'=4
+'/'=5
+'('=6
+')'=7
