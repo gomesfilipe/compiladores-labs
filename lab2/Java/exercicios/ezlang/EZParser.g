@@ -11,19 +11,6 @@ varssect:
   VAR vardecl*
 ;
 
-// varssect: 
-//   VAR optvardecl
-// ;
-
-// optvardecl:
-//   vardecllist?
-// ;
-
-// vardecllist: 
-//   vardecllist vardecl 
-// | vardecl 
-// ;
-
 vardecl:
   typespec ID SEMI 
 ;
