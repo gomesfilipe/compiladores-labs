@@ -7,18 +7,22 @@ program:
   PROGRAM ID SEMI varssect stmtsect
 ;
 
-varssect: 
-  VAR optvardecl
+varssect:
+  VAR vardecl*
 ;
 
-optvardecl:
-  vardecllist?
-;
+// varssect: 
+//   VAR optvardecl
+// ;
 
-vardecllist: 
-  vardecllist vardecl 
-| vardecl 
-;
+// optvardecl:
+//   vardecllist?
+// ;
+
+// vardecllist: 
+//   vardecllist vardecl 
+// | vardecl 
+// ;
 
 vardecl:
   typespec ID SEMI 
@@ -31,38 +35,33 @@ typespec:
 | STRING
 ;
 
-stmtsect: 
-  BEGIN stmtlist END
-;
-
-stmtlist: 
-  stmtlist stmt 
-| stmt 
+stmtsect:
+  BEGIN stmt+ END
 ;
 
 stmt: 
-  ifstmt 
-| repeatstmt 
-| assignstmt 
+  assignstmt 
+| ifstmt 
 | readstmt 
+| repeatstmt 
 | writestmt
-;
-
-ifstmt: 
-  IF expr THEN stmtlist END
-| IF expr THEN stmtlist ELSE stmtlist END 
-;
-
-repeatstmt: 
-  REPEAT stmtlist UNTIL expr
 ;
 
 assignstmt: 
   ID ASSIGN expr SEMI
 ;
 
+ifstmt: 
+   IF expr THEN stmt+ END
+|  IF expr THEN stmt+ ELSE stmt+ END 
+;
+
 readstmt: 
   READ ID SEMI
+;
+
+repeatstmt:
+  REPEAT stmt+ UNTIL expr
 ;
 
 writestmt: 
@@ -70,10 +69,10 @@ writestmt:
 ;
 
 expr:
-  LPAR expr RPAR 
-| expr OVER expr | expr TIMES expr 
-| expr PLUS expr | expr MINUS expr 
-| expr EQ expr | expr LT expr
+  expr (TIMES | OVER) expr
+| expr (PLUS | MINUS) expr
+| expr (EQ | LT) expr
+| LPAR expr RPAR 
 | TRUE 
 | FALSE 
 | INT_VAL 
