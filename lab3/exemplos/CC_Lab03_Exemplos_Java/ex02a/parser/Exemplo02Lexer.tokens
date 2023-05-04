@@ -1,0 +1,10 @@
+NUMBER=1
+PLUS=2
+MINUS=3
+TIMES=4
+OVER=5
+WS=6
+'+'=2
+'-'=3
+'*'=4
+'/'=5
