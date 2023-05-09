@@ -1,5 +1,9 @@
 lexer grammar EZLexer;
 
+@header {
+    package parser;
+}
+
 fragment INT_VALUE  : ([1-9][0-9]*)|'0' ;
 fragment REAL_VALUE : INT_VALUE '.' INT_VALUE ;
 fragment STR_VALUE  : '"'~["]*'"' ;

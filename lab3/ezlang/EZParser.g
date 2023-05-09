@@ -3,6 +3,10 @@ options {
   tokenVocab = EZLexer;
 }
 
+@header {
+    package parser;
+}
+
 program: 
   PROGRAM ID SEMI varssect stmtsect
 ;
@@ -56,14 +60,14 @@ writestmt:
 ;
 
 expr:
-  expr (TIMES | OVER) expr
-| expr (PLUS | MINUS) expr
-| expr (EQ | LT) expr
-| LPAR expr RPAR 
-| TRUE 
-| FALSE 
-| INT_VAL 
-| REAL_VAL 
-| STR_VAL
-| ID 
+  expr (TIMES | OVER) expr #times_over_expr
+| expr (PLUS | MINUS) expr #plus_minus_expr
+| expr (EQ | LT) expr #eq_lt_epr
+| LPAR expr RPAR #par_expr
+| TRUE #true
+| FALSE #false
+| INT_VAL #int_val
+| REAL_VAL #real_val
+| STR_VAL #str_val
+| ID #id
 ;
