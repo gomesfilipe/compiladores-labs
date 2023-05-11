@@ -31,11 +31,33 @@ public interface EZParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVardecl(EZParser.VardeclContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link EZParser#typespec}.
+	 * Visit a parse tree produced by the {@code bool}
+	 * labeled alternative in {@link EZParser#typespec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypespec(EZParser.TypespecContext ctx);
+	T visitBool(EZParser.BoolContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code int}
+	 * labeled alternative in {@link EZParser#typespec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInt(EZParser.IntContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code real}
+	 * labeled alternative in {@link EZParser#typespec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReal(EZParser.RealContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code string}
+	 * labeled alternative in {@link EZParser#typespec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitString(EZParser.StringContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link EZParser#stmtsect}.
 	 * @param ctx the parse tree

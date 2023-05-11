@@ -20,10 +20,10 @@ vardecl:
 ;
 
 typespec: 
-  BOOL
-| INT 
-| REAL 
-| STRING
+  BOOL #bool
+| INT  #int
+| REAL #real
+| STRING #string
 ;
 
 stmtsect:
