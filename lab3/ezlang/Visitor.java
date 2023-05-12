@@ -7,14 +7,15 @@ import typing.Type;
 import parser.EZParser;
 import parser.EZParserBaseVisitor;
 
-public class Visitor extends EZParserBaseVisitor<Type>{
+public class Visitor extends EZParserBaseVisitor<Void>{
     private StrTable strTable = new StrTable();
     private VarTable varTable = new VarTable();
-    
+    private Type currentType;
+
     @Override
-    public Type visitStr_val(EZParser.Str_valContext ctx) {
+    public Void visitStr_val(EZParser.Str_valContext ctx) {
         strTable.add(ctx.STR_VAL().getText());
-        return Type.INT_TYPE; // PERGUNTAR
+        return null;
     }
 
     public StrTable getStrTable() {
@@ -26,57 +27,73 @@ public class Visitor extends EZParserBaseVisitor<Type>{
     }
 
     @Override 
-    public Type visitVardecl(EZParser.VardeclContext ctx) {
-        
-        Type type = visit(ctx.typespec());
-        System.out.println(type);
-
-        
-
-        this.handleVarTableVardecl(ctx, type);
-        return Type.INT_TYPE; // PERGUNTAR
+    public Void visitVardecl(EZParser.VardeclContext ctx) {
+        this.handleVarTableVardecl(ctx);
+        return null;
     }
 
-    private String handleVarTableVardecl(EZParser.VardeclContext ctx, Type type) {
+    private Void handleVarTableVardecl(EZParser.VardeclContext ctx) {
         if(varTable.lookupVar(ctx.ID().getText()) != -1) { // Existe, disparar erro!
-            System.out.println("Variável " + ctx.ID().getText() + "redeclarada.");
+            // System.out.println("Variável " + ctx.ID().getText() + "redeclarada.");
+            System.out.println("SEMANTIC ERROR (9): variable '" + ctx.ID().getText() + "' already declared at line " + this.varTable.getLine(this.varTable.lookupVar(ctx.ID().getText())) + ".");
             System.exit(1);
-            return "";
         } else {
-            // varTable.addVar(ctx.ID().getText(), ctx.ID().getLine(), type);
-            varTable.addVar(ctx.ID().getText(), ctx.getStart().getLine(), type);
-            return "";
+            visit(ctx.typespec());
+            varTable.addVar(ctx.ID().getText(), ctx.getStart().getLine(), this.currentType);
         }
+        return null;
     }
 
     @Override
-    public Type visitBool(EZParser.BoolContext ctx)
-    {
-        System.out.println("Bool");
-        // return ctx.BOOL().getText();
-        return Type.BOOL_TYPE;
+    public Void visitBool(EZParser.BoolContext ctx) {
+        this.currentType = Type.BOOL_TYPE;
+        return null;
     }
 
     @Override
-    public Type visitInt(EZParser.IntContext ctx)
-    {
-        System.out.println("Int");
-        return Type.INT_TYPE;
+    public Void visitInt(EZParser.IntContext ctx) {
+        this.currentType = Type.INT_TYPE;
+        return null;
 
     }
 
     @Override
-    public Type visitReal(EZParser.RealContext ctx)
-    {
-        System.out.println("real");
-        return Type.REAL_TYPE;
+    public Void visitReal(EZParser.RealContext ctx) {
+        this.currentType = Type.REAL_TYPE;
+        return null;
     }
 
     @Override
-    public Type visitString(EZParser.StringContext ctx)
-    {
-        System.out.println("string");
-        return Type.STR_TYPE;
+    public Void visitString(EZParser.StringContext ctx) {
+        this.currentType = Type.STR_TYPE;
+        return null;
     }
     
+    @Override 
+    public Void visitAssignstmt(EZParser.AssignstmtContext ctx) {
+        visit(ctx.expr());
+        this.handleIdInMain(ctx.ID().getText());
+        return null; 
+    }
+
+    @Override 
+    public Void visitReadstmt(EZParser.ReadstmtContext ctx) {
+        this.handleIdInMain(ctx.ID().getText());
+        return null; 
+    }
+
+    @Override 
+    public Void visitId(EZParser.IdContext ctx) { 
+        this.handleIdInMain(ctx.ID().getText());
+        return null; 
+    }
+
+    private Void handleIdInMain(String id) {
+        if(varTable.lookupVar(id) == -1) { // Não existe, disparar erro!
+            System.out.println("SEMANTIC ERROR (9): variable '" + id + "' was not declared.");
+            System.exit(1);
+        }
+
+        return null;
+    }
 }
