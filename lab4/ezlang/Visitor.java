@@ -14,7 +14,7 @@ public class Visitor extends EZParserBaseVisitor<Type>{
     @Override
     public Type visitStr_val(EZParser.Str_valContext ctx) {
         strTable.add(ctx.STR_VAL().getText());
-        return null;
+        return Type.STR_TYPE;
     }
 
     public StrTable getStrTable() {
@@ -74,12 +74,29 @@ public class Visitor extends EZParserBaseVisitor<Type>{
         Type typeID = varTable.getTypeByName(ctx.ID().getText());
         Type typeExpr = visit(ctx.expr());
         
-        if(!this.checkResultAtributionType(typeID, typeExpr)) {
-            System.out.println("SEMANTIC ERROR (" + ctx.getLine() + "): incompatible types for operator '" + ctx.ASSIGN.getText() + "', LHS is " + typeID + " and RHS is " + typeExpr + "." );
+        checkResultAtributionType(typeID, typeExpr, ctx.getStart().getLine(), ":=");
+        return null;
+    }
+
+    private Boolean checkResultAtributionType(Type type1, Type type2, int line, String op) {
+        Boolean result = this.getResultAtributionType(type1, type2);
+        if(!result) {
+            System.out.println("SEMANTIC ERROR (" + line + "): incompatible types for operator '" + op + "', LHS is '" + type1 + "' and RHS is '" + type2 + "'." );
             System.exit(7);
         }
+        return result;
+    }
 
-        return null; 
+    private Boolean getResultAtributionType(Type type1, Type type2) {
+        if(type1 == type2) {
+            return true;
+        } 
+
+        if(type1 == Type.REAL_TYPE && type2 == Type.INT_TYPE) {
+            return true;
+        }
+
+        return false;
     }
 
     @Override 
@@ -90,8 +107,7 @@ public class Visitor extends EZParserBaseVisitor<Type>{
 
     @Override 
     public Type visitId(EZParser.IdContext ctx) { 
-        this.handleIdInMain(ctx.ID().getText());
-        return null; 
+        return this.handleIdInMain(ctx.ID().getText());
     }
 
     private Type handleIdInMain(String id) {
@@ -100,22 +116,93 @@ public class Visitor extends EZParserBaseVisitor<Type>{
             System.exit(1);
         }
 
-        return null;
+        return this.varTable.getTypeByName(id);
     }
 
-    private Boolean checkResultAtributionType(Type type1, Type type2) {
-        if(type1 == type2) {
-            return true;
-        } 
+    @Override 
+    public Type visitTimes_over_expr(EZParser.Times_over_exprContext ctx) { 
+        Type type1 = visit(ctx.expr(0));
+        Type type2 = visit(ctx.expr(1));
+        
+        if(ctx.op.getType() == EZParser.OVER) {
+            return this.checkResultOperationType(type1, type2, ctx.getStart().getLine(),"/"); 
 
-        if(type1 == Type.REAL_TYPE && type2.INT_TYPE) {
-            return true;
+        } else if(ctx.op.getType() == EZParser.TIMES) {
+            return this.checkResultOperationType(type1, type2, ctx.getStart().getLine(),"*"); 
+        } else {
+            System.out.println("Error");
+            System.exit(1);
+            return null;
+        }
+    }
+
+	@Override 
+    public Type visitTrue(EZParser.TrueContext ctx) { 
+        return Type.BOOL_TYPE; 
+    }
+
+	@Override 
+    public Type visitFalse(EZParser.FalseContext ctx) { 
+        return Type.BOOL_TYPE;  
+    }
+
+	@Override 
+    public Type visitPlus_minus_expr(EZParser.Plus_minus_exprContext ctx) { 
+        Type type1 = visit(ctx.expr(0));
+        Type type2 = visit(ctx.expr(1));
+        
+        if(ctx.op.getType() == EZParser.PLUS) {
+            return this.checkResultOperationType(type1, type2, ctx.getStart().getLine(),"+"); 
+
+        } else if(ctx.op.getType() == EZParser.MINUS) {
+            return this.checkResultOperationType(type1, type2, ctx.getStart().getLine(),"-"); 
+        } else {
+            System.out.println("Error");
+            System.exit(1);
+            return null;
+        }
+    }
+
+    private Type checkResultOperationType(Type type1, Type type2, int line, String op) {
+        Type result = getReturnTypeOp(type1,type2,op);
+
+        if(result == null){
+            System.out.println("SEMANTIC ERROR (" + line + "): incompatible types for operator '" + op + "', LHS is '" + type1 + "' and RHS is '" + type2 + "'." );
+            System.exit(7);
         }
 
-        return false;
+        return result;
     }
 
-    private Boolean checkResultComparisonType(Type type1, Type type2) {
+	@Override 
+    public Type visitEq_lt_epr(EZParser.Eq_lt_eprContext ctx) { 
+        Type type1 = visit(ctx.expr(0));
+        Type type2 = visit(ctx.expr(1));
+
+        if(ctx.op.getType() == EZParser.EQ) {
+            checkResultComparisonType(type1,type2,ctx.getStart().getLine(),"=");
+            return Type.BOOL_TYPE;
+
+        } else if(ctx.op.getType() == EZParser.LT) {
+            checkResultComparisonType(type1,type2,ctx.getStart().getLine(),"<"); 
+            return Type.BOOL_TYPE;
+        } else {
+            System.out.println("Error");
+            System.exit(1);
+            return null;
+        }
+    }
+
+    private Boolean checkResultComparisonType(Type type1, Type type2, int line, String op) {
+        Boolean result = this.getResultComparisonType(type1, type2);
+        if(!result) {
+            System.out.println("SEMANTIC ERROR (" + line + "): incompatible types for operator '" + op + "', LHS is '" + type1 + "' and RHS is '" + type2 + "'.");
+            System.exit(7);
+        }
+        return result;
+    }
+
+    private Boolean getResultComparisonType(Type type1, Type type2) {
         if(type1 == Type.INT_TYPE && type2 == Type.INT_TYPE) {
             return true;
         }
@@ -138,6 +225,95 @@ public class Visitor extends EZParserBaseVisitor<Type>{
 
         return false;
     }
-}
 
-// 
+    @Override 
+    public Type visitReal_val(EZParser.Real_valContext ctx) { 
+        return Type.REAL_TYPE; 
+    }
+	
+	@Override 
+    public Type visitPar_expr(EZParser.Par_exprContext ctx) { 
+        return visit(ctx.expr()); 
+    }
+	
+	
+	@Override 
+    public Type visitInt_val(EZParser.Int_valContext ctx) { 
+        return Type.INT_TYPE;
+    }
+
+    private Type[][] getSemanticTableByOp(String op) {
+        switch(op) {        
+            case "+":
+                Type[][] matrix1 = {
+                    {Type.INT_TYPE, Type.REAL_TYPE, Type.INT_TYPE, Type.STR_TYPE},
+                    {Type.REAL_TYPE, Type.REAL_TYPE, Type.REAL_TYPE, Type.STR_TYPE},
+                    {Type.INT_TYPE, Type.REAL_TYPE, Type.BOOL_TYPE, Type.STR_TYPE},
+                    {Type.STR_TYPE, Type.STR_TYPE, Type.STR_TYPE, Type.STR_TYPE}
+                };
+                return matrix1;
+            case "-":
+            case "*":
+            case "/":
+                Type[][] matrix2 = {
+                    {Type.INT_TYPE, Type.REAL_TYPE, null, null},
+                    {Type.REAL_TYPE, Type.REAL_TYPE, null, null},
+                    {null, null, null, null},
+                    {null, null, null, null}
+                };
+                return matrix2;
+            default:
+                return null;
+        }
+    }
+
+    private Type getReturnTypeOp(Type type1, Type type2, String op) {
+        Type[][] matrix = this.getSemanticTableByOp(op);
+        return matrix[type1.toInteger()][type2.toInteger()];
+    }
+
+    @Override 
+    public Type visitSample_if(EZParser.Sample_ifContext ctx) { 
+        Type typeExpr = visit(ctx.expr());
+
+        if(typeExpr == Type.BOOL_TYPE) {
+            for(int i = 0; i < ctx.stmt().size(); i++) {
+                visit(ctx.stmt(i));
+            }
+        } else {
+            System.out.println("SEMANTIC ERROR (" + ctx.getStart().getLine() + "): conditional expression in 'if' is '" + typeExpr + "' instead of 'bool'.");
+            System.exit(7);
+        }
+        return null;  
+    }
+	
+	@Override 
+    public Type visitIf_else(EZParser.If_elseContext ctx) { 
+        Type typeExpr = visit(ctx.expr());
+
+        if(typeExpr == Type.BOOL_TYPE) {
+            for(int i = 0; i < ctx.stmt().size(); i++) {
+                visit(ctx.stmt(i));
+            }
+        } else {
+            System.out.println("SEMANTIC ERROR (" + ctx.getStart().getLine() + "): conditional expression in 'if' is '" + typeExpr + "' instead of 'bool'.");
+            System.exit(7);
+        }
+        return null;  
+    }
+
+    @Override 
+    public Type visitRepeatstmt(EZParser.RepeatstmtContext ctx) { 
+        Type typeExpr = visit(ctx.expr());
+
+        if(typeExpr == Type.BOOL_TYPE) {
+            for(int i = 0; i < ctx.stmt().size(); i++) {
+                visit(ctx.stmt(i));
+            }
+        } else {
+            System.out.println("SEMANTIC ERROR (" + ctx.expr().getStart().getLine() + "): conditional expression in 'repeat' is '" + typeExpr + "' instead of 'bool'.");
+            System.exit(7);
+        }
+        return null; 
+    }
+}

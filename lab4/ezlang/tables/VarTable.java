@@ -42,8 +42,8 @@ public final class VarTable {
 	}
 
 	public Type getTypeByName(String name) {
-		int i = table.lookupVar(name); // Pegando índice do nome na tabela;
-		return table.getType(i);
+		int i = lookupVar(name); // Pegando índice do nome na tabela;
+		return getType(i);
 	}
 
 	public String toString() {

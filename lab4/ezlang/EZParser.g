@@ -43,8 +43,8 @@ assignstmt:
 ;
 
 ifstmt: 
-   IF expr THEN stmt+ END
-|  IF expr THEN stmt+ ELSE stmt+ END 
+   IF expr THEN stmt+ END #sample_if
+|  IF expr THEN stmt+ ELSE stmt+ END #if_else 
 ;
 
 readstmt: 
@@ -60,9 +60,9 @@ writestmt:
 ;
 
 expr:
-  expr (TIMES | OVER) expr #times_over_expr
-| expr (PLUS | MINUS) expr #plus_minus_expr
-| expr (EQ | LT) expr #eq_lt_epr
+  expr op = (TIMES | OVER) expr #times_over_expr
+| expr op = (PLUS | MINUS) expr #plus_minus_expr
+| expr op = (EQ | LT) expr #eq_lt_epr
 | LPAR expr RPAR #par_expr
 | TRUE #true
 | FALSE #false

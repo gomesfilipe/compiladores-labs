@@ -1,4 +1,4 @@
-// Generated from /home/fgasouza/compiladores-labs/lab3/exemplos/CC_Lab03_Exemplos_Java/ex02b/Exemplo02.g by ANTLR 4.9.2
+// Generated from /home/filipe/git/compiladores-labs/lab3/exemplos/CC_Lab03_Exemplos_Java/ex02b/Exemplo02.g by ANTLR 4.9.2
 
     package parser;
 

@@ -1,4 +1,4 @@
-// Generated from /home/jcrepossi/compiladores-labs/lab4/ezlang/EZParser.g by ANTLR 4.9.2
+// Generated from /home/filipe/git/compiladores-labs/lab4/ezlang/EZParser.g by ANTLR 4.9.2
 
     package parser;
 
@@ -492,6 +492,17 @@ public class EZParser extends Parser {
 	}
 
 	public static class IfstmtContext extends ParserRuleContext {
+		public IfstmtContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_ifstmt; }
+	 
+		public IfstmtContext() { }
+		public void copyFrom(IfstmtContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class Sample_ifContext extends IfstmtContext {
 		public TerminalNode IF() { return getToken(EZParser.IF, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -504,11 +515,23 @@ public class EZParser extends Parser {
 		public StmtContext stmt(int i) {
 			return getRuleContext(StmtContext.class,i);
 		}
-		public TerminalNode ELSE() { return getToken(EZParser.ELSE, 0); }
-		public IfstmtContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
+		public Sample_ifContext(IfstmtContext ctx) { copyFrom(ctx); }
+	}
+	public static class If_elseContext extends IfstmtContext {
+		public TerminalNode IF() { return getToken(EZParser.IF, 0); }
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
 		}
-		@Override public int getRuleIndex() { return RULE_ifstmt; }
+		public TerminalNode THEN() { return getToken(EZParser.THEN, 0); }
+		public TerminalNode ELSE() { return getToken(EZParser.ELSE, 0); }
+		public TerminalNode END() { return getToken(EZParser.END, 0); }
+		public List<StmtContext> stmt() {
+			return getRuleContexts(StmtContext.class);
+		}
+		public StmtContext stmt(int i) {
+			return getRuleContext(StmtContext.class,i);
+		}
+		public If_elseContext(IfstmtContext ctx) { copyFrom(ctx); }
 	}
 
 	public final IfstmtContext ifstmt() throws RecognitionException {
@@ -520,6 +543,7 @@ public class EZParser extends Parser {
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
 			case 1:
+				_localctx = new Sample_ifContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(67);
@@ -547,6 +571,7 @@ public class EZParser extends Parser {
 				}
 				break;
 			case 2:
+				_localctx = new If_elseContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(77);
@@ -764,6 +789,7 @@ public class EZParser extends Parser {
 		public Int_valContext(ExprContext ctx) { copyFrom(ctx); }
 	}
 	public static class Times_over_exprContext extends ExprContext {
+		public Token op;
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -787,6 +813,7 @@ public class EZParser extends Parser {
 		public IdContext(ExprContext ctx) { copyFrom(ctx); }
 	}
 	public static class Plus_minus_exprContext extends ExprContext {
+		public Token op;
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -798,6 +825,7 @@ public class EZParser extends Parser {
 		public Plus_minus_exprContext(ExprContext ctx) { copyFrom(ctx); }
 	}
 	public static class Eq_lt_eprContext extends ExprContext {
+		public Token op;
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -918,9 +946,10 @@ public class EZParser extends Parser {
 						setState(125);
 						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
 						setState(126);
+						((Times_over_exprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==OVER || _la==TIMES) ) {
-						_errHandler.recoverInline(this);
+							((Times_over_exprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
 							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -938,9 +967,10 @@ public class EZParser extends Parser {
 						setState(128);
 						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
 						setState(129);
+						((Plus_minus_exprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==MINUS || _la==PLUS) ) {
-						_errHandler.recoverInline(this);
+							((Plus_minus_exprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
 							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -958,9 +988,10 @@ public class EZParser extends Parser {
 						setState(131);
 						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
 						setState(132);
+						((Eq_lt_eprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==EQ || _la==LT) ) {
-						_errHandler.recoverInline(this);
+							((Eq_lt_eprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
 							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;

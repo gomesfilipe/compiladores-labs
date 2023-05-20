@@ -14,8 +14,8 @@ IN=$DATA/in
 OUT=$DATA/out03
 
 for infile in `ls $IN/*.ezl`; do
-    base=$(basename $infile)
-    outfile=$OUT/${base/.ezl/.out}
-    echo Running $base
-    java $CLASS_PATH_OPTION:$BIN_PATH Main $infile 2>&1 | diff -w $outfile -
+  base=$(basename $infile)
+  outfile=$OUT/${base/.ezl/.out}
+  echo Running $base
+  java $CLASS_PATH_OPTION:$BIN_PATH Main $infile 2>&1 | diff -w $outfile -
 done
