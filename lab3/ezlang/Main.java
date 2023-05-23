@@ -41,6 +41,6 @@ public class Main {
 		System.out.println(visitor.getStrTable().toString());
 		System.out.print("\n");
 		System.out.println(visitor.getVarTable().toString());
-		System.out.print("\n\n");
+		System.out.print("\n");
 	}
 }
