@@ -15,9 +15,10 @@ public class Visitor extends EZParserBaseVisitor<AST>{
     private Type currentType;
 
     @Override
-    public Type visitStr_val(EZParser.Str_valContext ctx) {
+    public AST visitStr_val(EZParser.Str_valContext ctx) {
         strTable.add(ctx.STR_VAL().getText());
-        return Type.STR_TYPE;
+        AST ast = new AST(NodeKind.STR_VAL_NODE, strTable.size() - 1, Type.STR_TYPE);
+        return ast;
     }
 
     public StrTable getStrTable() {
@@ -28,13 +29,40 @@ public class Visitor extends EZParserBaseVisitor<AST>{
         return this.varTable;
     }
 
-    @Override 
-    public Type visitVardecl(EZParser.VardeclContext ctx) {
-        this.handleVarTableVardecl(ctx);
-        return null;
+    @Override
+    public AST visitProgram(EZParser.ProgramContext ctx) {
+        AST ast = new AST(NodeKind.PROGRAM_NODE,0,Type.NO_TYPE);
+        ast.addChild(visit(ctx.varssect()));
+        ast.addChild(visit(ctx.stmtsect()));
+
+        return ast;
     }
 
-    private Type handleVarTableVardecl(EZParser.VardeclContext ctx) {
+    @Override 
+    public AST visitVarssect(EZParser.VarssectContext ctx) {
+        
+        AST ast = new AST(NodeKind.VAR_LIST_NODE,0,Type.NO_TYPE);
+
+        int tam  = ctx.vardecl().size();
+        for(int i = 0 ; i< tam; i ++)
+        {
+            ast.addChild(visit(ctx.vardecl(i)));
+        }
+        return ast;
+    }
+
+    @Override 
+    public AST visitVardecl(EZParser.VardeclContext ctx) {
+        AST ast;
+        
+        this.handleVarTableVardecl(ctx);
+
+        ast = new AST(NodeKind.VAR_DECL_NODE,varTable.getSize()-1, varTable.getType(varTable.getSize()-1));
+        
+        return ast;
+    }
+
+    private Void handleVarTableVardecl(EZParser.VardeclContext ctx) {
         if(varTable.lookupVar(ctx.ID().getText()) != -1) { // Existe, disparar erro!
             // System.out.println("Variável " + ctx.ID().getText() + "redeclarada.");
             System.out.println("SEMANTIC ERROR (9): variable '" + ctx.ID().getText() + "' already declared at line " + this.varTable.getLine(this.varTable.lookupVar(ctx.ID().getText())) + ".");
@@ -46,27 +74,39 @@ public class Visitor extends EZParserBaseVisitor<AST>{
         return null;
     }
 
+	@Override 
+    public AST visitStmtsect(EZParser.StmtsectContext ctx){  
+        AST ast = new AST(NodeKind.BLOCK_NODE,0,Type.NO_TYPE);
+
+        int tam  = ctx.stmt().size();
+        for(int i = 0 ; i< tam; i ++)
+        {
+            ast.addChild(visit(ctx.stmt(i)));
+        }
+        return ast;
+    }
+
     @Override
-    public Type visitBool(EZParser.BoolContext ctx) {
+    public AST visitBool(EZParser.BoolContext ctx) {
         this.currentType = Type.BOOL_TYPE;
         return null;
     }
 
     @Override
-    public Type visitInt(EZParser.IntContext ctx) {
+    public AST visitInt(EZParser.IntContext ctx) {
         this.currentType = Type.INT_TYPE;
         return null;
 
     }
 
     @Override
-    public Type visitReal(EZParser.RealContext ctx) {
+    public AST visitReal(EZParser.RealContext ctx) {
         this.currentType = Type.REAL_TYPE;
         return null;
     }
 
     @Override
-    public Type visitString(EZParser.StringContext ctx) {
+    public AST visitString(EZParser.StringContext ctx) {
         this.currentType = Type.STR_TYPE;
         return null;
     }
@@ -75,22 +115,22 @@ public class Visitor extends EZParserBaseVisitor<AST>{
     public AST visitAssignstmt(EZParser.AssignstmtContext ctx) {
         this.handleIdInMain(ctx.ID().getText());
         Type typeID = varTable.getTypeByName(ctx.ID().getText());
+
+
         AST astExpr = visit(ctx.expr());
         
-        checkResultAtributionType(typeID, typeExpr, ctx.getStart().getLine(), ":=");
+        checkResultAtributionType(typeID, astExpr.type, ctx.getStart().getLine(), ":=");
         
-        AST ast = new AST(ASSIGN_NODE, 0, NO_TYPE);
-        AST left = new AST(VAR_USE_NODE, 0, typeID);
+        AST ast = new AST(NodeKind.ASSIGN_NODE, 0, Type.NO_TYPE);
+
+        AST left = new AST(NodeKind.VAR_USE_NODE,varTable.lookupVar(ctx.ID().getText()), typeID);
         ast.addChild(left);
-        AST wideNode;
         
         // Se precisa fazer cast
-        if(typeExpr == TYPE.INT_TYPE && typeID == TYPE.REAL_TYPE) {
-            wideNode = new AST(I2R_NODE, 0, TYPE.REAL_TYPE);
-            wideNode.addChild(astExpr);
-            ast.addChild(wideNode);
+        if(astExpr.type == Type.INT_TYPE && typeID == Type.REAL_TYPE) {
+            ast.addChild(insertConvertion(astExpr, Type.REAL_TYPE, NodeKind.I2R_NODE));
         } else {
-            ast.add(astExpr);
+            ast.addChild(astExpr);
         }
 
         return ast;
@@ -118,14 +158,30 @@ public class Visitor extends EZParserBaseVisitor<AST>{
     }
 
     @Override 
-    public Type visitReadstmt(EZParser.ReadstmtContext ctx) {
-        this.handleIdInMain(ctx.ID().getText());
-        return null; 
+    public AST visitReadstmt(EZParser.ReadstmtContext ctx) {
+        AST ast = new AST(NodeKind.READ_NODE,0,Type.NO_TYPE);
+        Type type = this.handleIdInMain(ctx.ID().getText());
+
+        AST child = new AST(NodeKind.VAR_USE_NODE,varTable.lookupVar(ctx.ID().getText()),type);
+        ast.addChild(child);
+        
+        return ast; 
+    }
+    
+    @Override  
+    public AST visitWritestmt(EZParser.WritestmtContext ctx) {
+        AST ast = new AST(NodeKind.WRITE_NODE, 0 ,Type.NO_TYPE);
+        AST child = visit(ctx.expr());
+        ast.addChild(child);
+        return ast;
     }
 
     @Override 
-    public Type visitId(EZParser.IdContext ctx) { 
-        return this.handleIdInMain(ctx.ID().getText());
+    public AST visitId(EZParser.IdContext ctx) { 
+        this.handleIdInMain(ctx.ID().getText());
+        Type typeID = varTable.getTypeByName(ctx.ID().getText());
+        AST id = new AST(NodeKind.VAR_USE_NODE, varTable.lookupVar(ctx.ID().getText()), typeID);
+        return id;
     }
 
     private Type handleIdInMain(String id) {
@@ -137,48 +193,108 @@ public class Visitor extends EZParserBaseVisitor<AST>{
         return this.varTable.getTypeByName(id);
     }
 
-    @Override 
-    public Type visitTimes_over_expr(EZParser.Times_over_exprContext ctx) { 
-        Type type1 = visit(ctx.expr(0));
-        Type type2 = visit(ctx.expr(1));
+    private boolean makeAstOperation(String op,AST dad,AST left, AST right, Type type){
+        //verificar se precisa de conversão
+        NodeKind leftConversion = getNodeKindConversion(op, left.type, right.type);
+        System.out.println(op + " " + leftConversion);
+        NodeKind rightConversion = getNodeKindConversion(op, right.type, left.type);
+        System.out.println(op + " " + rightConversion);
         
+        if(leftConversion == null && rightConversion == null) {
+            // sem nó de conversão
+            dad.addChild(left);
+            dad.addChild(right);
+        } else if(leftConversion != null && rightConversion == null) {
+            // nó de conversão a esquerda
+            dad.addChild(insertConvertion(left, type, leftConversion));
+            dad.addChild(right);
+
+        } else if(leftConversion == null && rightConversion != null) {
+            // nó de conversão a direita
+            dad.addChild(left);
+            dad.addChild(insertConvertion(right, type, rightConversion));
+
+        } else {
+           return false;
+        }
+        return true;
+    }
+
+    @Override 
+    public AST visitTimes_over_expr(EZParser.Times_over_exprContext ctx) { 
+        AST ast;
+        AST left = visit(ctx.expr(0));
+        AST right = visit(ctx.expr(1));
+
         if(ctx.op.getType() == EZParser.OVER) {
-            return this.checkResultOperationType(type1, type2, ctx.getStart().getLine(),"/"); 
+            Type type =  this.checkResultOperationType(left.type, left.type, ctx.getStart().getLine(),"/"); 
+            ast = new AST(NodeKind.OVER_NODE,0, type);
+            if(!makeAstOperation("/",ast, left,right, type)){
+                System.out.println("Error : (" + ctx.getStart().getLine() + ") Não é esperado uma coversão em ambos os lados da expressão");
+                System.exit(6);
+            }
 
         } else if(ctx.op.getType() == EZParser.TIMES) {
-            return this.checkResultOperationType(type1, type2, ctx.getStart().getLine(),"*"); 
+            Type type = this.checkResultOperationType(left.type, right.type, ctx.getStart().getLine(),"*"); 
+            ast = new AST(NodeKind.TIMES_NODE,0, type);
+            if(!makeAstOperation("*", ast, left,right,type)){
+                System.out.println("Error : (" + ctx.getStart().getLine() + ") Não é esperado uma coversão em ambos os lados da expressão");
+                System.exit(6);
+            }
         } else {
             System.out.println("Error");
             System.exit(1);
             return null;
         }
+        return ast;
     }
 
 	@Override 
-    public Type visitTrue(EZParser.TrueContext ctx) { 
-        return Type.BOOL_TYPE; 
+    public AST visitTrue(EZParser.TrueContext ctx) { 
+        AST ast = new AST(NodeKind.BOOL_VAL_NODE, 1, Type.BOOL_TYPE);
+        return ast; 
     }
 
 	@Override 
-    public Type visitFalse(EZParser.FalseContext ctx) { 
-        return Type.BOOL_TYPE;  
+    public AST visitFalse(EZParser.FalseContext ctx) { 
+        AST ast = new AST(NodeKind.BOOL_VAL_NODE, 0, Type.BOOL_TYPE);
+        return ast;  
     }
 
 	@Override 
-    public Type visitPlus_minus_expr(EZParser.Plus_minus_exprContext ctx) { 
-        Type type1 = visit(ctx.expr(0));
-        Type type2 = visit(ctx.expr(1));
+    public AST visitPlus_minus_expr(EZParser.Plus_minus_exprContext ctx) { 
+        AST ast ;
+        AST left = visit(ctx.expr(0));
+        AST right = visit(ctx.expr(1));
         
         if(ctx.op.getType() == EZParser.PLUS) {
-            return this.checkResultOperationType(type1, type2, ctx.getStart().getLine(),"+"); 
+            Type type = this.checkResultOperationType(left.type, right.type, ctx.getStart().getLine(), "+"); 
 
+            ast = new AST(NodeKind.PLUS_NODE, 0, type);
+
+            
+            if(!makeAstOperation("+",ast, left, right, type)){
+                System.out.println("Error : (" + ctx.getStart().getLine() + ") Não é esperado uma coversão em ambos os lados da expressão");
+                System.exit(6);
+            }
+            
+            
         } else if(ctx.op.getType() == EZParser.MINUS) {
-            return this.checkResultOperationType(type1, type2, ctx.getStart().getLine(),"-"); 
+            Type type = this.checkResultOperationType(left.type, right.type, ctx.getStart().getLine(), "-"); 
+            
+            ast = new AST(NodeKind.MINUS_NODE, 0, type);
+
+             if(!makeAstOperation("-", ast, left,right,type)){
+                System.out.println("Error : (" + ctx.getStart().getLine() + ") Não é esperado uma coversão em ambos os lados da expressão");
+                System.exit(6);
+            }
+            
         } else {
             System.out.println("Error");
             System.exit(1);
             return null;
-        }
+        } 
+        return ast; 
     }
 
     private Type checkResultOperationType(Type type1, Type type2, int line, String op) {
@@ -193,22 +309,52 @@ public class Visitor extends EZParserBaseVisitor<AST>{
     }
 
 	@Override 
-    public Type visitEq_lt_epr(EZParser.Eq_lt_eprContext ctx) { 
-        Type type1 = visit(ctx.expr(0));
-        Type type2 = visit(ctx.expr(1));
+    public AST visitEq_lt_epr(EZParser.Eq_lt_eprContext ctx) { 
+        AST ast;
+        AST left = visit(ctx.expr(0));
+        AST right = visit(ctx.expr(1));
 
         if(ctx.op.getType() == EZParser.EQ) {
-            checkResultComparisonType(type1,type2,ctx.getStart().getLine(),"=");
-            return Type.BOOL_TYPE;
-
+            checkResultComparisonType(left.type, right.type, ctx.getStart().getLine(), "=");
         } else if(ctx.op.getType() == EZParser.LT) {
-            checkResultComparisonType(type1,type2,ctx.getStart().getLine(),"<"); 
-            return Type.BOOL_TYPE;
+            checkResultComparisonType(left.type, right.type, ctx.getStart().getLine(),"<"); 
         } else {
             System.out.println("Error");
             System.exit(1);
             return null;
         }
+
+        if(left.type != right.type)
+        {
+            if(ctx.op.getType() == EZParser.EQ)
+            {
+                ast = new AST(NodeKind.EQ_NODE,0,Type.REAL_TYPE);
+            }
+            else{
+                ast = new AST(NodeKind.LT_NODE,0,Type.REAL_TYPE);
+            }
+            
+            if(left.type == Type.INT_TYPE && right.type == Type.REAL_TYPE)
+            {
+                ast.addChild(insertConvertion(left, Type.REAL_TYPE, NodeKind.I2R_NODE));
+                ast.addChild(right);
+            }else if(right.type == Type.INT_TYPE && left.type == Type.REAL_TYPE){
+                ast.addChild(left);
+                ast.addChild(insertConvertion(right, Type.REAL_TYPE, NodeKind.I2R_NODE));
+            }
+
+        }else{
+            ast = new AST(NodeKind.EQ_NODE,0,left.type);
+            ast.addChild(left);
+            ast.addChild(right);
+        }
+        return ast;        
+    }
+
+    private AST insertConvertion(AST sub, Type conv, NodeKind tipo ){
+        AST wideNode = new AST(tipo, 0, conv);
+        wideNode.addChild(sub);
+        return wideNode;
     }
 
     private Boolean checkResultComparisonType(Type type1, Type type2, int line, String op) {
@@ -245,19 +391,24 @@ public class Visitor extends EZParserBaseVisitor<AST>{
     }
 
     @Override 
-    public Type visitReal_val(EZParser.Real_valContext ctx) { 
-        return Type.REAL_TYPE; 
+    public AST visitReal_val(EZParser.Real_valContext ctx) { 
+        float value = Float.parseFloat(ctx.REAL_VAL().getText());
+        AST ast = new AST(NodeKind.REAL_VAL_NODE, value, Type.REAL_TYPE);
+        return ast;
     }
 	
 	@Override 
-    public Type visitPar_expr(EZParser.Par_exprContext ctx) { 
-        return visit(ctx.expr()); 
+    public AST visitPar_expr(EZParser.Par_exprContext ctx) { 
+        AST ast = visit(ctx.expr());
+        return ast;
     }
 	
 	
 	@Override 
-    public Type visitInt_val(EZParser.Int_valContext ctx) { 
-        return Type.INT_TYPE;
+    public AST visitInt_val(EZParser.Int_valContext ctx) { 
+        int value = Integer.parseInt(ctx.INT_VAL().getText());
+        AST ast = new AST(NodeKind.INT_VAL_NODE, value, Type.INT_TYPE);
+        return ast;
     }
 
     private Type[][] getSemanticTableByOp(String op) {
@@ -285,53 +436,105 @@ public class Visitor extends EZParserBaseVisitor<AST>{
         }
     }
 
+    private NodeKind getNodeKindConversion(String op, Type type1, Type type2) {
+        NodeKind[][] matrix  = getConversion(op);
+        return matrix[type1.toInteger()][type2.toInteger()];
+    }
+
+    private NodeKind[][] getConversion(String op) {
+        switch(op) {        
+            case "+":
+                NodeKind[][] matrix1 = {
+                    {null, NodeKind.I2R_NODE, null, NodeKind.I2S_NODE},
+                    {null,null, null,NodeKind.R2S_NODE},
+                    {NodeKind.B2I_NODE, NodeKind.B2R_NODE, null, NodeKind.B2S_NODE},
+                    {null,null,null, null} 
+                };
+                return matrix1;
+            case "-":
+            case "*":
+            case "/":
+                NodeKind[][] matrix2 = {
+                    {null, NodeKind.I2R_NODE, null, null},
+                    {null, null, null, null},
+                    {null, null, null, null},
+                    {null, null, null, null}
+                };
+                return matrix2;
+            default:
+                return null;
+        }
+    }
+
     private Type getReturnTypeOp(Type type1, Type type2, String op) {
         Type[][] matrix = this.getSemanticTableByOp(op);
         return matrix[type1.toInteger()][type2.toInteger()];
     }
 
     @Override 
-    public Type visitSample_if(EZParser.Sample_ifContext ctx) { 
-        Type typeExpr = visit(ctx.expr());
+    public AST visitSample_if(EZParser.Sample_ifContext ctx) { 
+        AST ast = new AST(NodeKind.IF_NODE,0,Type.NO_TYPE);
+        AST astExpr = visit(ctx.expr());
 
-        if(typeExpr == Type.BOOL_TYPE) {
+        if(astExpr.type == Type.BOOL_TYPE) {
+            ast.addChild(astExpr);
+            AST block = new AST(NodeKind.BLOCK_NODE,0,Type.NO_TYPE);
+
             for(int i = 0; i < ctx.stmt().size(); i++) {
-                visit(ctx.stmt(i));
+                AST child = visit(ctx.stmt(i));
+                block.addChild(child);
             }
+
+            ast.addChild(block);
         } else {
-            System.out.println("SEMANTIC ERROR (" + ctx.getStart().getLine() + "): conditional expression in 'if' is '" + typeExpr + "' instead of 'bool'.");
+            System.out.println("SEMANTIC ERROR (" + ctx.getStart().getLine() + "): conditional expression in 'if' is '" + astExpr.type + "' instead of 'bool'.");
             System.exit(7);
         }
-        return null;  
+        return ast;  
     }
-	
+    
 	@Override 
-    public Type visitIf_else(EZParser.If_elseContext ctx) { 
-        Type typeExpr = visit(ctx.expr());
+    public AST visitIf_else(EZParser.If_elseContext ctx) { 
+        AST ast = new AST(NodeKind.IF_NODE,0,Type.NO_TYPE);
+        AST astExpr = visit(ctx.expr());
 
-        if(typeExpr == Type.BOOL_TYPE) {
+        if(astExpr.type == Type.BOOL_TYPE) {
+            ast.addChild(astExpr);
+            AST block = new AST(NodeKind.BLOCK_NODE,0,Type.NO_TYPE);
+
             for(int i = 0; i < ctx.stmt().size(); i++) {
-                visit(ctx.stmt(i));
+                AST child = visit(ctx.stmt(i));
+                block.addChild(child);
             }
+
+            ast.addChild(block);
         } else {
-            System.out.println("SEMANTIC ERROR (" + ctx.getStart().getLine() + "): conditional expression in 'if' is '" + typeExpr + "' instead of 'bool'.");
+            System.out.println("SEMANTIC ERROR (" + ctx.getStart().getLine() + "): conditional expression in 'if' is '" + astExpr.type + "' instead of 'bool'.");
             System.exit(7);
         }
-        return null;  
+        return ast;  
     }
 
     @Override 
-    public Type visitRepeatstmt(EZParser.RepeatstmtContext ctx) { 
-        Type typeExpr = visit(ctx.expr());
+    public AST visitRepeatstmt(EZParser.RepeatstmtContext ctx) { 
+        AST ast = new AST(NodeKind.REPEAT_NODE, 0, Type.NO_TYPE);
 
-        if(typeExpr == Type.BOOL_TYPE) {
+        AST astExpr = visit(ctx.expr());
+
+        if(astExpr.type == Type.BOOL_TYPE) {
+            AST block = new AST(NodeKind.BLOCK_NODE, 0, Type.NO_TYPE);
+            
             for(int i = 0; i < ctx.stmt().size(); i++) {
-                visit(ctx.stmt(i));
+                AST child = visit(ctx.stmt(i));
+                block.addChild(child);
             }
+
+            ast.addChild(block);
+            ast.addChild(astExpr); // expr deve ser o filho a direita no repeat
         } else {
-            System.out.println("SEMANTIC ERROR (" + ctx.expr().getStart().getLine() + "): conditional expression in 'repeat' is '" + typeExpr + "' instead of 'bool'.");
+            System.out.println("SEMANTIC ERROR (" + ctx.expr().getStart().getLine() + "): conditional expression in 'repeat' is '" + astExpr.type + "' instead of 'bool'.");
             System.exit(7);
         }
-        return null; 
+        return ast; 
     }
 }

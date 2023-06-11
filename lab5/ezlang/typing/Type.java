@@ -32,6 +32,19 @@ public enum Type {
 		}
 	}
 
+	public int toInteger() {
+		switch(this) {
+			case INT_TYPE:	return 0;
+			case REAL_TYPE: return 1;
+			case BOOL_TYPE: return 2;
+			case STR_TYPE: 	return 3;
+			default:
+				System.err.println("ERROR: Fall through in Type enumeration!");
+				System.exit(1);
+				return -1; // Never reached.
+		}
+	}
+
 	// Tabela de unificação de tipos primitivos para o operador '+'.
 	private static Unif plus[][] ={
 		{ new Unif(INT_TYPE, NONE, NONE), new Unif(REAL_TYPE, I2R, NONE),  new Unif(INT_TYPE, NONE, B2I),   new Unif(STR_TYPE, I2S, NONE)  },

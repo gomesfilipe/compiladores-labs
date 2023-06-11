@@ -5,8 +5,8 @@ JAVA=java
 # ROOT é a raiz dos diretórios com todos os roteiros de laboratórios
 YEAR=$(shell pwd | grep -o '20..-.')
 # ROOT=/home/fgasouza/compiladores-labs/lab4
-# ROOT=/home/filipe/git/compiladores-labs/lab4/
-ROOT=/home/fgasouza/compiladores-labs/lab5/
+ROOT=/home/filipe/git/compiladores-labs/lab5/
+# ROOT=/home/fgasouza/compiladores-labs/lab5/
 # ROOT=/home/jcrepossi/compiladores-labs/lab4
 # ROOT=/home/jcrepossi/compiladores-labs/lab4
 # Caminho para o JAR do ANTLR em labs/tools
@@ -40,7 +40,8 @@ javac:
 # Executa o front-end. Comando: $ make run FILE=arquivo_de_teste
 # 'Main' é a classe com a função principal
 run:
-	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) Main $(FILE)
+	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) Main $(FILE) 2> $(FILE).dot
+	dot -Tpdf $(FILE).dot -o $(FILE).pdf
 # Executa o TestRig para exibir a parse tree
 debug:
 	cd $(BIN_PATH) && $(GRUN) $(GEN_PATH).$(GRAMMAR_NAME) line -gui $(FILE)

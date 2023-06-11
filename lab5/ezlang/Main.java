@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 // import Visitor;
 import parser.EZLexer;
 import parser.EZParser;
+import ast.AST;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -33,14 +34,15 @@ public class Main {
 
 		// Cria a calculadora e visita a ParseTree para computar.
 		Visitor visitor = new Visitor();
-		visitor.visit(tree);
+		AST ast = visitor.visit(tree);
 
 		// Saída final.
 		System.out.println("PARSE SUCCESSFUL!");
 		System.out.print("\n\n");
-		System.out.println(visitor.getStrTable().toString());
-		System.out.print("\n");
-		System.out.println(visitor.getVarTable().toString());
-		System.out.print("\n");
+		AST.printDot(ast, visitor.getVarTable());
+		// System.out.println(visitor.getStrTable().toString());
+		// System.out.print("\n");
+		// System.out.println(visitor.getVarTable().toString());
+		// System.out.print("\n");
 	}
 }
