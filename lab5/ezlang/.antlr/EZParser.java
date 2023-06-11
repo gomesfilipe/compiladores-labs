@@ -518,6 +518,8 @@ public class EZParser extends Parser {
 		public Sample_ifContext(IfstmtContext ctx) { copyFrom(ctx); }
 	}
 	public static class If_elseContext extends IfstmtContext {
+		public StmtContext ifblock;
+		public StmtContext elseblock;
 		public TerminalNode IF() { return getToken(EZParser.IF, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -587,7 +589,7 @@ public class EZParser extends Parser {
 					{
 					{
 					setState(80);
-					stmt();
+					((If_elseContext)_localctx).ifblock = stmt();
 					}
 					}
 					setState(83); 
@@ -603,7 +605,7 @@ public class EZParser extends Parser {
 					{
 					{
 					setState(86);
-					stmt();
+					((If_elseContext)_localctx).elseblock = stmt();
 					}
 					}
 					setState(89); 

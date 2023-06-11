@@ -196,9 +196,7 @@ public class Visitor extends EZParserBaseVisitor<AST>{
     private boolean makeAstOperation(String op,AST dad,AST left, AST right, Type type){
         //verificar se precisa de conversão
         NodeKind leftConversion = getNodeKindConversion(op, left.type, right.type);
-        System.out.println(op + " " + leftConversion);
         NodeKind rightConversion = getNodeKindConversion(op, right.type, left.type);
-        System.out.println(op + " " + rightConversion);
         
         if(leftConversion == null && rightConversion == null) {
             // sem nó de conversão
@@ -316,24 +314,19 @@ public class Visitor extends EZParserBaseVisitor<AST>{
 
         if(ctx.op.getType() == EZParser.EQ) {
             checkResultComparisonType(left.type, right.type, ctx.getStart().getLine(), "=");
+            ast = new AST(NodeKind.EQ_NODE,0,Type.BOOL_TYPE);
+
         } else if(ctx.op.getType() == EZParser.LT) {
             checkResultComparisonType(left.type, right.type, ctx.getStart().getLine(),"<"); 
+            ast = new AST(NodeKind.LT_NODE,0,Type.BOOL_TYPE);
         } else {
             System.out.println("Error");
             System.exit(1);
             return null;
         }
 
-        if(left.type != right.type)
+        if(left.type != right.type) // Precisa fazer conversão
         {
-            if(ctx.op.getType() == EZParser.EQ)
-            {
-                ast = new AST(NodeKind.EQ_NODE,0,Type.REAL_TYPE);
-            }
-            else{
-                ast = new AST(NodeKind.LT_NODE,0,Type.REAL_TYPE);
-            }
-            
             if(left.type == Type.INT_TYPE && right.type == Type.REAL_TYPE)
             {
                 ast.addChild(insertConvertion(left, Type.REAL_TYPE, NodeKind.I2R_NODE));
@@ -344,7 +337,6 @@ public class Visitor extends EZParserBaseVisitor<AST>{
             }
 
         }else{
-            ast = new AST(NodeKind.EQ_NODE,0,left.type);
             ast.addChild(left);
             ast.addChild(right);
         }
@@ -495,19 +487,40 @@ public class Visitor extends EZParserBaseVisitor<AST>{
     
 	@Override 
     public AST visitIf_else(EZParser.If_elseContext ctx) { 
+        // System.out.println("############");
+        // System.out.println(ctx);
+        // System.out.println(ctx.stmt());
+        // System.out.println(ctx.ifblock == ctx.stmt(2));
+        // System.out.println(ctx.elseblock == ctx.stmt(2));
+        // System.out.println("############");
         AST ast = new AST(NodeKind.IF_NODE,0,Type.NO_TYPE);
         AST astExpr = visit(ctx.expr());
 
         if(astExpr.type == Type.BOOL_TYPE) {
             ast.addChild(astExpr);
-            AST block = new AST(NodeKind.BLOCK_NODE,0,Type.NO_TYPE);
+            // AST block = new AST(NodeKind.BLOCK_NODE,0,Type.NO_TYPE);
+            AST ifBlock = new AST(NodeKind.BLOCK_NODE,0,Type.NO_TYPE);
+            AST elseBlock = new AST(NodeKind.BLOCK_NODE,0,Type.NO_TYPE);
+            int i;
 
-            for(int i = 0; i < ctx.stmt().size(); i++) {
+            for(i = 0; ctx.stmt(i) != ctx.elseblock; i++) {
                 AST child = visit(ctx.stmt(i));
-                block.addChild(child);
+                ifBlock.addChild(child);
             }
 
-            ast.addChild(block);
+            for(int j = i; j < ctx.stmt().size(); j++) {
+                AST child = visit(ctx.stmt(j));
+                elseBlock.addChild(child);
+            }
+
+            // for(int i = 0; i < ctx.stmt().size(); i++) {
+            //     AST child = visit(ctx.stmt(i));
+            //     block.addChild(child);
+            // }
+
+            // ast.addChild(block);
+            ast.addChild(ifBlock);
+            ast.addChild(elseBlock);
         } else {
             System.out.println("SEMANTIC ERROR (" + ctx.getStart().getLine() + "): conditional expression in 'if' is '" + astExpr.type + "' instead of 'bool'.");
             System.exit(7);

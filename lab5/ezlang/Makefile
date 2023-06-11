@@ -40,9 +40,17 @@ javac:
 # Executa o front-end. Comando: $ make run FILE=arquivo_de_teste
 # 'Main' é a classe com a função principal
 run:
-	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) Main $(FILE) 2> $(FILE).dot
-	dot -Tpdf $(FILE).dot -o $(FILE).pdf
+	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) Main $(FILE) 
+# 2> $(FILE).dot
+# $(FILE) 2> $(FILE).dot
+# @echo "file: [$(FILE)]"
+# 2> $(FILE).dot
+# dot -Tpdf $(FILE).dot -o $(FILE).pdf
 # Executa o TestRig para exibir a parse tree
+
+# runAST:
+# 	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) Main $(FILE) 
+
 debug:
 	cd $(BIN_PATH) && $(GRUN) $(GEN_PATH).$(GRAMMAR_NAME) line -gui $(FILE)
 # Remove os arquivos gerados pelo ANTLR

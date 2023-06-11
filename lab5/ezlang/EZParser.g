@@ -44,7 +44,7 @@ assignstmt:
 
 ifstmt: 
    IF expr THEN stmt+ END #sample_if
-|  IF expr THEN stmt+ ELSE stmt+ END #if_else 
+|  IF expr THEN ifblock=stmt+ ELSE elseblock=stmt+ END #if_else 
 ;
 
 readstmt: 

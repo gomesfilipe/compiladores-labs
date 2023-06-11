@@ -40,9 +40,9 @@ public class Main {
 		System.out.println("PARSE SUCCESSFUL!");
 		System.out.print("\n\n");
 		AST.printDot(ast, visitor.getVarTable());
-		// System.out.println(visitor.getStrTable().toString());
-		// System.out.print("\n");
-		// System.out.println(visitor.getVarTable().toString());
-		// System.out.print("\n");
+		System.out.println(visitor.getStrTable().toString());
+		System.out.print("\n");
+		System.out.println(visitor.getVarTable().toString());
+		System.out.print("\n");
 	}
 }
