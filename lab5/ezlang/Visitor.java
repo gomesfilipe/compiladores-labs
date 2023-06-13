@@ -343,8 +343,8 @@ public class Visitor extends EZParserBaseVisitor<AST>{
         return ast;        
     }
 
-    private AST insertConvertion(AST sub, Type conv, NodeKind tipo ){
-        AST wideNode = new AST(tipo, 0, conv);
+    private AST insertConvertion(AST sub, Type conv, NodeKind typeNode){
+        AST wideNode = new AST(typeNode, 0, conv);
         wideNode.addChild(sub);
         return wideNode;
     }
