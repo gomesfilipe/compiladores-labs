@@ -61,6 +61,9 @@ public abstract class ASTBaseVisitor<T> {
 	
 	// Métodos especializados para visitar um nó com um certo 'kind'.
 
+
+// Esse n ́o n ̃ao deixa um valor na pilha por n ̃ao ser uma express ̃ao.
+
 	protected abstract T visitAssign(AST node);
 
 	protected abstract T visitEq(AST node);

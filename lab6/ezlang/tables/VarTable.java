@@ -45,6 +45,10 @@ public final class VarTable {
 		return table.size();
 	}
 
+	public int size() {
+		return table.size();
+	}
+
 	public Type getTypeByName(String name) {
 		int i = lookupVar(name); // Pegando índice do nome na tabela;
 		return getType(i);

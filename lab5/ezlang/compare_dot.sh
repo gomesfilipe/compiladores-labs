@@ -1,6 +1,6 @@
 #!/bin/bash
-ROOT=/home/filipe/git/compiladores-labs/lab5
-# ROOT=/home/fgasouza/compiladores-labs/lab5
+# ROOT=/home/filipe/git/compiladores-labs/lab5
+ROOT=/home/fgasouza/compiladores-labs/lab5
 ANTLR_PATH=$ROOT/tools/antlr-4.11.1-complete.jar
 CLASS_PATH_OPTION="-cp .:$ANTLR_PATH"
 

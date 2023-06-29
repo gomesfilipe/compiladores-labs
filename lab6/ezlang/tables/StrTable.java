@@ -28,4 +28,15 @@ public final class StrTable extends ArrayList<String>{
 		return sb.toString();
 	}
 
+	public int addStr(String s) {
+    	int i;
+		for (i = 0; i < this.size(); i++) {
+			if (this.get(i).equals(s)) {
+				return i;
+			}
+		}
+		super.add(s);
+		return i;
+	}
+
 }

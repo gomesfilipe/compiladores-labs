@@ -48,9 +48,28 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	// ninja dos caminhamentos em árvores...
 
 	// TODO
-	@Override
+
+// 	ASSIGN_NODE: Executa recursivamente o filho contendo a express ̃ao `a direita da atri-
+// bui ̧c ̃ao, para deixar o valor a ser atribu ́ıdo `a vari ́avel no topo da pilha. A seguir, desempi-
+// lha esse valor e armazena o novo valor da vari ́avel, respeitando os tipos (inteiro ou real).
+	@Override // X = 2
 	protected Void visitAssign(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		visit(node.getChild(1)); // expr
+		visit(node.getChild(0)); // id
+		
+		int index = stack.popi();
+		float resultFloat;
+		int resultInt;
+
+		if(node.getChild(0).type == Type.INT_TYPE) {
+			resultInt = stack.popi();
+			memory.storei(index, resultInt);
+		} else if(node.type == Type.FLOAT_TYPE) {
+			resultFloat = stack.popf();
+			memory.storef(index, resultFloat);
+		}
+
+		return null;
 	}
 
 	// TODO
@@ -68,6 +87,7 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	// TODO
 	@Override
 	protected Void visitBoolVal(AST node) {
+		
 		return null; // Java exige um valor de retorno mesmo para Void... :/
 	}
 
@@ -98,6 +118,21 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	// TODO
 	@Override
 	protected Void visitOver(AST node) {
+		visit(node.getChild(0));
+		visit(node.getChild(1));
+		
+		
+		int resultInt;
+		float floatInt;
+
+		if(node.type == Type.INT_TYPE) {
+			int overResult = popi() * popi();
+			pushi(overResult)
+		} else if(node.type == Type.REAL_TYPE) {
+			float overResult = popf() * popf();
+			pushf(overResult)	
+		}
+
 		return null; // Java exige um valor de retorno mesmo para Void... :/
 	}
 
