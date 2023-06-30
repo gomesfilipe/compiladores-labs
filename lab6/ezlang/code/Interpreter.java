@@ -41,18 +41,8 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		this.in = new Scanner(System.in);
 	}
 
-	// -------------------------------------------------------
-	// Daqui para frente são os métodos especializados de cada
-	// nó. O código deve ser mais ou menos auto-explicativo.
-	// Estou assumindo que nessa altura de tudo você já está
-	// ninja dos caminhamentos em árvores...
-
 	// TODO
-
-// 	ASSIGN_NODE: Executa recursivamente o filho contendo a express ̃ao `a direita da atri-
-// bui ̧c ̃ao, para deixar o valor a ser atribu ́ıdo `a vari ́avel no topo da pilha. A seguir, desempi-
-// lha esse valor e armazena o novo valor da vari ́avel, respeitando os tipos (inteiro ou real).
-	@Override // X = 2
+	@Override
 	protected Void visitAssign(AST node) {
 		visit(node.getChild(1)); // expr
 		int index = node.getChild(0).intData;
