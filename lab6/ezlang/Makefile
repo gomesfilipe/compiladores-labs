@@ -4,8 +4,8 @@ JAVAC=javac
 JAVA=java
 # ROOT é a raiz dos diretórios com todos os roteiros de laboratórios
 # ROOT=/home/fgasouza/compiladores-labs/lab4
-# ROOT=/home/filipe/git/compiladores-labs/lab6/
-ROOT=/home/fgasouza/compiladores-labs/lab6/
+ROOT=/home/filipe/git/compiladores-labs/lab6/
+# ROOT=/home/fgasouza/compiladores-labs/lab6/
 # ROOT=/home/jcrepossi/compiladores-labs/lab4
 # ROOT=/home/jcrepossi/compiladores-labs/lab4
 # Caminho para o JAR do ANTLR em labs/tools

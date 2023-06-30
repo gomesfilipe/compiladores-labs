@@ -64,7 +64,8 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		if(node.getChild(0).type == Type.INT_TYPE) {
 			resultInt = stack.popi();
 			memory.storei(index, resultInt);
-		} else if(node.type == Type.FLOAT_TYPE) {
+		
+		} else if(node.type == Type.REAL_TYPE) {
 			resultFloat = stack.popf();
 			memory.storef(index, resultFloat);
 		}
@@ -75,71 +76,143 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	// TODO
 	@Override
 	protected Void visitEq(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+
+		visit(node.getChild(1)); // expr
+		visit(node.getChild(0)); // expr
+
+		boolean bool_result = stack.popi() == stack.popi();
+		
+		if(bool_result == true) {
+			stack.pushi(1);	
+
+		} else if(bool_result == false) {
+			stack.pushi(0);	
+		}
+		
+
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitBlock(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		for (int i = 0; i < node.getChildrenSize(); i++) {
+
+		}
+		
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitBoolVal(AST node) {
-		
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		stack.pushi(node.intData);
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitIf(AST node) {
-        return null; // Java exige um valor de retorno mesmo para Void... :/
+    return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitIntVal(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		stack.pushi(node.intData);
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitLt(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		visit(node.getChild(1)); // expr
+		visit(node.getChild(0)); // id
+
+		boolean bool_result = stack.popi() < stack.popi();
+
+		if(bool_result == true){
+			stack.pushi(1);
+		}else if(bool_result == false){
+			stack.pushi(0);
+		}
+		
+
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitMinus(AST node) {
+		visit(node.getChild(1));
+		visit(node.getChild(0));
+		
+		int resultInt;
+		float floatInt;
+
+		if(node.type == Type.INT_TYPE) {
+			int overResult = stack.popi() - stack.popi();
+			stack.pushi(overResult);
+		} else if(node.type == Type.REAL_TYPE) {
+			float overResult = stack.popf() - stack.popf();
+			stack.pushf(overResult);
+		}
 		return null; // Java exige um valor de retorno mesmo para Void... :/
 	}
 
 	// TODO
 	@Override
 	protected Void visitOver(AST node) {
-		visit(node.getChild(0));
 		visit(node.getChild(1));
-		
+		visit(node.getChild(0));
 		
 		int resultInt;
 		float floatInt;
 
 		if(node.type == Type.INT_TYPE) {
-			int overResult = popi() * popi();
-			pushi(overResult)
+			int overResult = stack.popi() / stack.popi();
+			stack.pushi(overResult);
 		} else if(node.type == Type.REAL_TYPE) {
-			float overResult = popf() * popf();
-			pushf(overResult)	
+			float overResult = stack.popf() / stack.popf();
+			stack.pushf(overResult);
 		}
 
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitPlus(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		visit(node.getChild(1));
+		visit(node.getChild(0));
+		
+		int resultInt;
+		float floatInt;
+
+		if(node.type == Type.INT_TYPE) {
+			int plusResult = stack.popi() + stack.popi();
+			stack.pushi(plusResult);
+		
+		} else if(node.type == Type.REAL_TYPE) {
+			float plusResult = stack.popf() + stack.popf();
+			stack.pushf(plusResult);
+		
+		} else if(node.type == Type.STR_TYPE) {
+			int indexStr1 = stack.popi();
+			int indexStr2 = stack.popi();
+			String concatResult = st.get(indexStr1) + st.get(indexStr2);
+			int indexConcat = st.addStr(concatResult);
+			stack.pushi(indexConcat); 
+
+		} else if(node.type == Type.BOOL_TYPE) {
+
+			if(stack.popi() == 1 || stack.popi() == 1){
+				stack.pushi(1);
+			}else{
+				stack.pushi(0);
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -162,14 +235,14 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		System.out.printf("read (int): ");
 		int value = in.nextInt();
 		memory.storei(varIdx, value);
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null; 
 	}
 
 	private Void readReal(int varIdx) {
 		System.out.printf("read (real): ");
 		float value = in.nextFloat();
 		memory.storef(varIdx, value);
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null; 
 	}
 
 	private Void readBool(int varIdx) {
@@ -179,7 +252,7 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	        value = in.nextInt();
 	    } while (value != 0 && value != 1);
 	    memory.storei(varIdx, value);
-	    return null; // Java exige um valor de retorno mesmo para Void... :/
+	    return null; 
 	}
 
 	private Void readStr(int varIdx) {
@@ -187,67 +260,83 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		String s = in.next();
 		int strIdx = st.addStr(s);
 		memory.storei(varIdx, strIdx);
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitRealVal(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		stack.pushf(node.intData);
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitRepeat(AST node) {
-	    return null; // Java exige um valor de retorno mesmo para Void... :/
+	    return null;
 	}
 
 	@Override
 	protected Void visitStrVal(AST node) {
 		stack.pushi(node.intData);
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitTimes(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		visit(node.getChild(1));
+		visit(node.getChild(0));
+		
+		int resultInt;
+		float floatInt;
+
+		if(node.type == Type.INT_TYPE) {
+			int overResult = stack.popi() * stack.popi();
+			stack.pushi(overResult);
+		} else if(node.type == Type.REAL_TYPE) {
+			float overResult = stack.popf() * stack.popf();
+			stack.pushf(overResult);
+		}
+
+		return null;
 	}
 
 	@Override
 	protected Void visitVarDecl(AST node) {
 		// Nothing to do.
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null;
 	}
 
 	@Override
 	protected Void visitVarList(AST node) {
 		// Nothing to do.
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitVarUse(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitWrite(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null;
 	}
 
 	// Funções auxiliares para implementar 'visitWrite'.
 
 	private Void writeInt() {
 		System.out.println(stack.popi());
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null;
 	}
 
 	private Void writeReal() {
 		System.out.println(stack.popf());
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null;
 	}
 
 	private Void writeBool() {
@@ -295,13 +384,17 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	// TODO
 	@Override
 	protected Void visitB2I(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		visit(node.getChild(0)); // já vem certo
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitB2R(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		visit(node.getChild(0));
+		float boolVal = (float) stack.popi();
+		stack.pushf(boolVal);
+		return null;
 	}
 
 	@Override
@@ -314,13 +407,16 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 			s = '"' + Boolean.toString(true) + '"';
 		}
 		stack.pushi(st.addStr(s));
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null;
 	}
 
 	// TODO
 	@Override
 	protected Void visitI2R(AST node) {
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		visit(node.getChild(0)); // já vem certo
+		float intVal = (float) stack.popi();
+		stack.pushf(intVal);
+		return null;
 	}
 
 	@Override
@@ -328,7 +424,7 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		visit(node.getChild(0));
 		String s = '"' + Integer.toString(stack.popi()) + '"';
 		stack.pushi(st.addStr(s));
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null;
 	}
 
 	@Override
@@ -336,7 +432,6 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		visit(node.getChild(0));
 		String s = '"' + Float.toString(stack.popf()) + '"';
 		stack.pushi(st.addStr(s));
-		return null; // Java exige um valor de retorno mesmo para Void... :/
+		return null;
 	}
-
 }

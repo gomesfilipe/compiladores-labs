@@ -1,4 +1,4 @@
-// Generated from /home/filipe/git/compiladores-labs/lab5/ezlang/EZParser.g by ANTLR 4.9.2
+// Generated from /home/filipe/git/compiladores-labs/lab6/ezlang/EZParser.g by ANTLR 4.9.2
 
     package parser;
 
