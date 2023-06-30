@@ -12,7 +12,9 @@ public abstract class ASTBaseVisitor<T> {
 	// passado. Precisa ter outro nome porque tem a mesma assinatura
 	// que o método "genérico" 'visit'.
 	public void execute(AST root) {
+		// System.out.println("ENTROU EXECUTE");
 		visit(root);
+		// System.out.println("SAIU EXECUTE");
 	}
 	
 	// Método "genérico" que despacha a visitação para os métodos
@@ -23,6 +25,9 @@ public abstract class ASTBaseVisitor<T> {
 	// Por outro lado, assim não precisa de trocentas classes com o
 	// código todo espalhado entre elas...
 	protected T visit(AST node) {
+		// System.out.println("ENTROU VISIT");
+		// System.out.println(node.type);
+		
 		switch(node.kind) {
 	        case ASSIGN_NODE:   return visitAssign(node);
 	        case EQ_NODE:       return visitEq(node);

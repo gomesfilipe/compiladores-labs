@@ -9,12 +9,13 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import parser.EZLexer;
 import parser.EZParser;
 import ast.AST;
+import code.Interpreter;
 
 public class Main {
     public static void main(String[] args) throws IOException {
 		// Cria um CharStream que lê os caracteres de stdin.
-		CharStream input = CharStreams.fromStream(System.in);
-
+		// CharStream input = CharStreams.fromStream(System.in);
+		CharStream input = CharStreams.fromFileName(args[0]);
 		// Cria um lexer que consome a entrada do CharStream.
 		EZLexer lexer = new EZLexer(input);
 
@@ -36,13 +37,15 @@ public class Main {
 		Visitor visitor = new Visitor();
 		AST ast = visitor.visit(tree);
 
-		// Saída final.
-		System.out.println("PARSE SUCCESSFUL!");
-		System.out.print("\n\n");
-		AST.printDot(ast, visitor.getVarTable());
-		System.out.println(visitor.getStrTable().toString());
-		System.out.print("\n");
-		System.out.println(visitor.getVarTable().toString());
-		System.out.print("\n");
+		// System.out.println("PARSE SUCCESSFUL!");
+		// System.out.print("\n\n");
+		// AST.printDot(ast, visitor.getVarTable());
+		// System.out.println(visitor.getStrTable().toString());
+		// System.out.print("\n");
+		// System.out.println(visitor.getVarTable().toString());
+		// System.out.print("\n");
+
+		Interpreter interpreter = new Interpreter(visitor.getStrTable(), visitor.getVarTable());
+		interpreter.execute(ast);
 	}
 }

@@ -39,7 +39,7 @@ javac:
 # Executa o front-end. Comando: $ make run FILE=arquivo_de_teste
 # 'Main' é a classe com a função principal
 run:
-	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) Main $(FILE) 
+	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) Main $(FILE)
 
 debug:
 	cd $(BIN_PATH) && $(GRUN) $(GEN_PATH).$(GRAMMAR_NAME) line -gui $(FILE)
