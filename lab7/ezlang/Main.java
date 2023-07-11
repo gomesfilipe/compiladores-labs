@@ -5,11 +5,13 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-// import Visitor;
 import parser.EZLexer;
 import parser.EZParser;
 import ast.AST;
+import code.CodeGen;
+import code.Instruction;
 import code.Interpreter;
+
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -45,7 +47,13 @@ public class Main {
 		// System.out.println(visitor.getVarTable().toString());
 		// System.out.print("\n");
 
-		Interpreter interpreter = new Interpreter(visitor.getStrTable(), visitor.getVarTable());
-		interpreter.execute(ast);
+		// Interpreter interpreter = new Interpreter(visitor.getStrTable(), visitor.getVarTable());
+		// interpreter.execute(ast);
+
+
+		// Executa o gerador de código.
+		CodeGen codeGen = new CodeGen(visitor.getStrTable(), visitor.getVarTable());
+		codeGen.execute(ast);
+		
 	}
 }

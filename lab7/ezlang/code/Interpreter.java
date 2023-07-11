@@ -118,7 +118,7 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	// TODO
 	@Override
 	protected Void visitIf(AST node) {
-    visit(node.getChild(0));
+    	visit(node.getChild(0));
 		int result = stack.popi();
 
 		if(result == 1) {
@@ -216,8 +216,6 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		visit(node.getChild(1));
 		visit(node.getChild(0));
 		
-		int resultInt;
-		float floatInt;
 
 		if(node.type == Type.INT_TYPE) {		
 
@@ -418,7 +416,7 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		return null;
 	}
 
-	// TODO
+
 	@Override
 	protected Void visitWrite(AST node) {
 		visit(node.getChild(0));

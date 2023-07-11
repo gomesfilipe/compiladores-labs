@@ -6,7 +6,7 @@ program loop;
 var int x;
 begin
     x := 5;
-    repeat
+    repeat 
         write x;
         x := x - 1;
     until x = 0
