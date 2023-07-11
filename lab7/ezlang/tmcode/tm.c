@@ -444,6 +444,7 @@ StepResult read_real(int x) {
     float real;
     printf("read (real): ");
     scanf("%f", &real);
+    printf("%f\n", real);
     fs[x] = real;
     pc++;
     return OKAY;
@@ -455,6 +456,7 @@ StepResult read_bool(int x) {
         printf("read (bool - 0 = false, 1 = true): ");
         scanf("%d", &boolean);
     } while (boolean != 0 && boolean != 1);
+    printf("%d\n", boolean);
     is[x] = boolean;
     pc++;
     return OKAY;
@@ -464,6 +466,7 @@ StepResult read_str(int x) {
     printf("read (str): ");
     clear_str_buf();
     scanf("%s", str_buf);   // Did anyone say Buffer Overflow..? ;P
+    printf("%s\n", str_buf);
     is[x] = add_string(st, str_buf);
     pc++;
     return OKAY;
